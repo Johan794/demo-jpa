@@ -17,7 +17,12 @@ public class UserService {
     private final UserMapper mapper;
 
     public IcesiUser save (UserCreateDTO user){
-        return userRepository.save(mapper.fromUserDTO(user));
+        if(userRepository.findIcesiUserByEmail(user.getEmail()).isPresent()){
+            throw  new RuntimeException();
+        }
+        IcesiUser icesiUser = mapper.fromUserDTO(user);
+        icesiUser.setUserID(UUID.randomUUID());
+        return userRepository.save(icesiUser);
     }
 
     public Optional<IcesiUser> findById(UUID id){
